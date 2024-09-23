@@ -1,7 +1,7 @@
 import winston from 'winston';
 import 'winston-daily-rotate-file';
 
-// Set up file rotation transport
+// Set up file rotation transports
 const dailyRotateFileTransport = new winston.transports.DailyRotateFile({
     filename: 'logs/%DATE%-results.log',
     datePattern: 'YYYY-MM-DD',
