@@ -8,6 +8,8 @@ import { redisClient } from '../../lib/redis/RedisClient'
 import { Brand, Shop, Warehouse } from '../../models'
 import mongoose, { Types } from 'mongoose'
 import { success } from '../../helpers/Response'
+import logger from '../../lib/winston/logger';
+
 
 
 const signup = async (req: Request, res: Response) => {
@@ -107,30 +109,33 @@ const signup = async (req: Request, res: Response) => {
 }
 
 const login = async (req: Request, res: Response) => {
-    //check existing user
-    const { email, password } = req.body as UserInterface.IUserLogin;
-    const userData = await User.findOne({
-        email: email
-    });
-    if (!userData) {
-        throw new BadRequestError(MessagesEnglish.USER_NOT_FOUND);
-    }
-    const isValid = await Password.compare(userData.password, password);
+    try {
+        //check existing user
+        const { email, password } = req.body as UserInterface.IUserLogin;
+        const userData = await User.findOne({
+            email: email
+        });
+        if (!userData) {
+            throw new BadRequestError(MessagesEnglish.USER_NOT_FOUND);
+        }
+        const isValid = await Password.compare(userData.password, password);
 
-    if (!isValid) {
-        throw new BadRequestError(MessagesEnglish.INVALID_EMAIL_OR_PASSWORD);
-    }
-    const warehouse = await Warehouse.findOne({ userId: userData?._id })
+        if (!isValid) {
+            throw new BadRequestError(MessagesEnglish.INVALID_EMAIL_OR_PASSWORD);
+        }
+        const warehouse = await Warehouse.findOne({ userId: userData?._id })
 
-    // Return JWT token
-    const token = jwt.sign({ id: userData.id, fullName: userData.fullName }, process.env.JWT_KEY!, {
-        expiresIn: "1d",
-    });
-    const expTime = Date.now() + 1 * 24 * 60 * 60 * 1000;
-    redisClient.set(`login:${userData.id}`, String(expTime))
-    const getredis = await redisClient.get(`login:${userData.id}`);
-    console.log("getredis==========", getredis);
-    res.status(201).send({ userData, warehouseId: warehouse?._id, token });
+        // Return JWT token
+        const token = jwt.sign({ id: userData.id, fullName: userData.fullName }, process.env.JWT_KEY!, {
+            expiresIn: "1d",
+        });
+        const expTime = Date.now() + 1 * 24 * 60 * 60 * 1000;
+        redisClient.set(`login:${userData.id}`, String(expTime))
+        res.status(201).send({ userData, warehouseId: warehouse?._id, token });
+    } catch (error) {
+        logger.error(`Error in login method: ${error}`);
+        throw error;
+    }
 }
 
 export { signup, login }
