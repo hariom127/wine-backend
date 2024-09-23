@@ -10,7 +10,14 @@ import { BadRequestError } from '../errors/bad-request-error';
 
 class BaseController {
 
-    async find(model: ModelNames, query: any, projection: { [key: string]: number }, options = {}, sort?: { [key: string]: number }, paginate?: { pageNo: number, limit: number }, populateQuery?: any, session?: ClientSession) {
+    async find(
+        model: ModelNames,
+        query: any,
+        projection: { [key: string]: number },
+        options = {},
+        sort?: { [key: string]: number },
+        paginate: { pageNo: number, limit: number } = { pageNo: 1, limit: 10 },
+        populateQuery?: any, session?: ClientSession) {
         try {
             const ModelName: any = models[model];
             options = { ...options, lean: true, session }; // Add session to options
