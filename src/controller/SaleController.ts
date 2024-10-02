@@ -218,9 +218,9 @@ class SaleController {
                 from: Labels.transferStage.customer,
                 to: Labels.transferStage.shop,
             };
+
             const history = History.build(historyData);
             await history.save({ session });
-
             await session.commitTransaction();
             session.endSession();
             const result = success(MessagesEnglish.SALE_DELETED, {}, HTTP_STATUS_CODE.OK);

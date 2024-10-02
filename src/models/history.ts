@@ -119,7 +119,8 @@ const historySchema = new mongoose.Schema(
         Labels.transferStage.fromX,
         Labels.transferStage.depo,
         Labels.transferStage.warehouse,
-        Labels.transferStage.shop
+        Labels.transferStage.shop,
+        Labels.transferStage.customer,
       ]
     },
     to: {
