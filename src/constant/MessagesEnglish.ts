@@ -17,6 +17,7 @@ const MessagesEnglish = {
     PRODUCT_DELETED: "Product deleted successfully",
     QTY_UPDATED: "Qty has been updated successfully",
     SOMETHING_WENT_WRONG: "Something went wrong !", // 400
+    QTY_IS_SAME: "Can't update qty is same !", // 400
     INVALID_PRODUCT_ID: "Invalid product id !",
     SHOP_NOT_FOUND: "Shop not found !",
     BOX_QTY_EXCEED: "Box quantity can't be exceed from available quantity !",
