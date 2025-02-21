@@ -222,6 +222,10 @@ class ProductController {
                 return Promise.reject(new BadRequestError(MessagesEnglish.INVALID_PRODUCT_ID))
             }
 
+            if (Number(product.qty) === Number(qty)) {
+                return Promise.reject(new BadRequestError(MessagesEnglish.QTY_IS_SAME))
+            }
+
             if (String(product?.userId) !== String(currentUser?.id)) {
                 return Promise.reject(new BadRequestError(MessagesEnglish.PRODUCT_NOT_BELONGS_TO_YOU))
             }

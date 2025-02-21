@@ -107,7 +107,8 @@ const productSchema = new mongoose.Schema(
       type: String,
       enum: [
         Labels.status.active,
-        Labels.status.inactive
+        Labels.status.inactive,
+        Labels.status.deleted
       ],
       default: Labels.status.active,
     },
