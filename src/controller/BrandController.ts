@@ -66,7 +66,7 @@ class BrandController {
             }
 
             const model = "Brand" as ModelNames;
-            const brands = await baseController.find(model, match, {}, {}, { name: 1 }, {});
+            const brands = await baseController.find(model, match, {}, {}, { name: 1 });
             console.log("brands====>", brands.length)
             const result = success(MessagesEnglish.BRAND_RECEIVED, brands, HTTP_STATUS_CODE.OK)
             res.status(HTTP_STATUS_CODE.OK).send(result);

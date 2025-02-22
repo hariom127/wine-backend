@@ -12,7 +12,7 @@ class BaseController {
         projection: { [key: string]: number },
         options = {},
         sort?: { [key: string]: number },
-        paginate?: { pageNo: number, limit: number } | {},
+        paginate?: { pageNo: number, limit: number },
         populateQuery?: any, session?: ClientSession) {
         try {
             const ModelName: any = models[model];
@@ -25,7 +25,7 @@ class BaseController {
             }
 
             if (paginate && !_.isEmpty(paginate)) {
-                queryBuilder = queryBuilder.skip((paginate.pageNo - 1) * paginate?.limit).limit(paginate?.limit);
+                queryBuilder = queryBuilder.skip((paginate?.pageNo - 1) * paginate?.limit).limit(paginate?.limit);
             }
 
             if (!_.isEmpty(populateQuery)) {
