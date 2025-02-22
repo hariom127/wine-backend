@@ -6,6 +6,7 @@ import { AppService } from '../services/appService';
 import { Types } from 'mongoose';
 import { Brand } from '../models';
 import { BadRequestError } from '../errors/bad-request-error';
+import { log } from 'util';
 
 class BrandController {
     async getBrands(req: Request, res: Response) {
@@ -65,8 +66,8 @@ class BrandController {
             }
 
             const model = "Brand" as ModelNames;
-            const brands = await baseController.find(model, match, {}, {}, { name: 1 });
-
+            const brands = await baseController.find(model, match, {}, {}, { name: 1 }, {});
+            console.log("brands====>", brands.length)
             const result = success(MessagesEnglish.BRAND_RECEIVED, brands, HTTP_STATUS_CODE.OK)
             res.status(HTTP_STATUS_CODE.OK).send(result);
         } catch (error) {

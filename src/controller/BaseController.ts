@@ -1,11 +1,7 @@
-import express, { Request, Response } from 'express'
-import { Category } from '../models/category'
-import { HTTP_STATUS_CODE, Labels, MessagesEnglish } from '../constant';
-import { success } from '../helpers/Response';
-import { InternalServerError } from '../errors/internal-server-error';
+import { MessagesEnglish } from '../constant';
 import * as models from "../models";
 var _ = require('lodash');
-import { ClientSession, PipelineStage } from 'mongoose';
+import { ClientSession } from 'mongoose';
 import { BadRequestError } from '../errors/bad-request-error';
 
 class BaseController {
@@ -16,7 +12,7 @@ class BaseController {
         projection: { [key: string]: number },
         options = {},
         sort?: { [key: string]: number },
-        paginate: { pageNo: number, limit: number } = { pageNo: 1, limit: 10 },
+        paginate?: { pageNo: number, limit: number } | {},
         populateQuery?: any, session?: ClientSession) {
         try {
             const ModelName: any = models[model];
@@ -28,7 +24,7 @@ class BaseController {
                 queryBuilder = queryBuilder.sort(sort);
             }
 
-            if (!_.isEmpty(paginate)) {
+            if (paginate && !_.isEmpty(paginate)) {
                 queryBuilder = queryBuilder.skip((paginate.pageNo - 1) * paginate?.limit).limit(paginate?.limit);
             }
 
