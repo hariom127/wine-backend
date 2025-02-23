@@ -3,10 +3,45 @@ import { HTTP_STATUS_CODE, Labels, MessagesEnglish } from '../constant';
 import { success } from '../helpers/Response';
 import { baseController } from './BaseController';
 import { BadRequestError } from '../errors/bad-request-error';
-import { Product, Shop, ShopProduct, History } from '../models';
+import { Product, Shop, ShopProduct, History, Warehouse } from '../models';
 import mongoose, { Types } from 'mongoose';
-
+import logger from '../lib/winston/logger';
 class ShopController {
+
+    //Create shop
+    async create(req: Request, res: Response) {
+        try {
+            console.log("new req=====");
+
+            const { name, address, city, pincode, state } = req.body;
+            const currentUser = req.currentUser!;
+
+            const query: any = {
+                userId: { $eq: new Types.ObjectId(currentUser.id) },
+                status: { $eq: Labels.status.active }
+            }
+            const warehouse: any = await Warehouse.findOne(query);
+            if (!warehouse) {
+                throw new BadRequestError(MessagesEnglish.WAREHOUSE_NOT_FOUND);
+            }
+
+            const shop = {
+                name,
+                address,
+                city,
+                pincode,
+                state,
+                userId: new Types.ObjectId(currentUser.id),
+                warehouseId: warehouse._id,
+            };
+            await Shop.create(shop);
+            const result = success(MessagesEnglish.SHOP_CREATED, {}, HTTP_STATUS_CODE.OK)
+            res.status(HTTP_STATUS_CODE.OK).send(result);
+        } catch (error) {
+            logger.error(`Error ShopController.create: ${error}`);
+            throw new BadRequestError(MessagesEnglish.SOMETHING_WENT_WRONG)
+        }
+    }
 
     async getShops(req: Request, res: Response) {
         try {
@@ -97,7 +132,7 @@ class ShopController {
             const model = "ShopProduct" as ModelNames;
             const shops = await baseController.paginate(model, aggPipe, query.limit, query.pageNo, {}, true);
 
-            const result = success(MessagesEnglish.SHOP_RECEIVED, shops, HTTP_STATUS_CODE.OK)
+            const result = success(MessagesEnglish.PRODUCT_RECEIVED, shops, HTTP_STATUS_CODE.OK)
             res.status(HTTP_STATUS_CODE.OK).send(result);
         } catch (error) {
             console.log("error-----", error);
@@ -188,7 +223,7 @@ class ShopController {
 
             await session.commitTransaction();
             session.endSession();
-            const result = success(MessagesEnglish.SHOP_RECEIVED, {}, HTTP_STATUS_CODE.OK)
+            const result = success(MessagesEnglish.PRODUCT_IMPORTED, {}, HTTP_STATUS_CODE.OK)
             res.status(HTTP_STATUS_CODE.OK).send(result);
         } catch (error) {
             console.log(error);
@@ -249,7 +284,7 @@ class ShopController {
 
             await session.commitTransaction();
             session.endSession();
-            const result = success(MessagesEnglish.SHOP_RECEIVED, {}, HTTP_STATUS_CODE.OK)
+            const result = success(MessagesEnglish.QTY_UPDATED, {}, HTTP_STATUS_CODE.OK)
             res.status(HTTP_STATUS_CODE.OK).send(result);
         } catch (error) {
             console.log(error);
