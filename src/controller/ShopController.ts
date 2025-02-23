@@ -11,8 +11,6 @@ class ShopController {
     //Create shop
     async create(req: Request, res: Response) {
         try {
-            console.log("new req=====");
-
             const { name, address, city, pincode, state } = req.body;
             const currentUser = req.currentUser!;
 
