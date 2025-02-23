@@ -5,6 +5,22 @@ import { shopControllerV1 } from '../../controller/index'
 
 const router = express.Router()
 
+//Create shop
+router.post(
+  '/api/v1/shops',
+  currentUser,
+  requireAuth,
+  [
+    body('name').isString().isLength({ min: 1, max: 100 }).withMessage('Provide a valid name !'),
+    body('address').isString().isLength({ min: 1, max: 500 }).withMessage('Provide a valid address !'),
+    body('city').isString().isLength({ min: 1, max: 100 }).withMessage('Provide a valid city !'),
+    body('state').isString().isLength({ min: 1, max: 100 }).withMessage('Provide a valid state !'),
+    body('pincode').isString().isLength({ min: 6, max: 6 }).withMessage('Provide a valid pincode !'),
+  ],
+  validateRequest,
+  shopControllerV1.create
+)
+
 router.get(
   '/api/v1/shops',
   currentUser,
@@ -73,6 +89,8 @@ router.post(
   validateRequest,
   shopControllerV1.importProduct
 )
+
+
 
 //***** Not inline qty update *****/
 // router.post(
